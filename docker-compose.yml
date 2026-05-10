@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: humhub_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: humhub
+      MYSQL_USER: humhub
+      MYSQL_PASSWORD: humhubpass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  humhub:
+    image: humhub/humhub:stable
+    container_name: humhub_app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      HUMHUB_DB_HOST: db
+      HUMHUB_DB_NAME: humhub
+      HUMHUB_DB_USER: humhub
+      HUMHUB_DB_PASSWORD: humhubpass
+    depends_on:
+      - db
+    volumes:
+      - humhub_data:/var/www/localhost/htdocs/uploads
+
+volumes:
+  db_data:
+  humhub_data:
